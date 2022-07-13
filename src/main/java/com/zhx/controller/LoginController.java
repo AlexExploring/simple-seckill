@@ -3,8 +3,6 @@ package com.zhx.controller;
 import com.zhx.service.TUserService;
 import com.zhx.vo.LoginVo;
 import com.zhx.vo.RespBean;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +18,6 @@ import javax.validation.Valid;
 @Controller
 @Slf4j
 @RequestMapping("/login")
-@Api(value = "登录", tags = "登录")
 public class LoginController {
 
     @Autowired
@@ -29,19 +26,15 @@ public class LoginController {
     /**
      * 跳转登录页面
      **/
-    @ApiOperation("跳转登录页面")
     @GetMapping(value = "/toLogin")
     public String toLogin() {
         return "login";
     }
 
-
-    @ApiOperation("登录接口")
     @RequestMapping(value = "/doLogin", method = RequestMethod.POST)
     @ResponseBody
     public RespBean doLogin(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response) {
         log.info("{}", loginVo);
         return tUserService.doLongin(loginVo, request, response);
     }
-
 }
