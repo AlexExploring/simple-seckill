@@ -1,5 +1,6 @@
 package com.zhx.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zhx.pojo.TSeckillGoods;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity com.zhx.pojo.TSeckillGoods
 */
 @Mapper
-public interface TSeckillGoodsMapper {
+public interface TSeckillGoodsMapper extends BaseMapper<TSeckillGoods> {
 
 }
 

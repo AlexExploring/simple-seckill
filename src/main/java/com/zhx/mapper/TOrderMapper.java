@@ -1,5 +1,7 @@
 package com.zhx.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zhx.pojo.TOrder;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -9,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity com.zhx.pojo.TOrder
 */
 @Mapper
-public interface TOrderMapper {
+public interface TOrderMapper extends BaseMapper<TOrder> {
 
 }
 

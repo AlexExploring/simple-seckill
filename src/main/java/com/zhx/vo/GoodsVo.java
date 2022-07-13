@@ -1,6 +1,7 @@
 package com.zhx.vo;
 
 import com.zhx.pojo.TGoods;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
  * @date 2022/3/3 5:43 下午
  * @ClassName: GoodsVo
  */
+@Data
 public class GoodsVo extends TGoods {
 
     /**
@@ -33,36 +35,4 @@ public class GoodsVo extends TGoods {
      * 结束时间
      **/
     private Date endDate;
-
-    public BigDecimal getSeckillPrice() {
-        return seckillPrice;
-    }
-
-    public void setSeckillPrice(BigDecimal seckillPrice) {
-        this.seckillPrice = seckillPrice;
-    }
-
-    public Integer getStockCount() {
-        return stockCount;
-    }
-
-    public void setStockCount(Integer stockCount) {
-        this.stockCount = stockCount;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
 }
