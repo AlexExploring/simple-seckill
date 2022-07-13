@@ -1,6 +1,9 @@
 package com.zhx.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zhx.mapper.TGoodsMapper;
+import com.zhx.mapper.TOrderMapper;
+import com.zhx.mapper.TSeckillOrderMapper;
 import com.zhx.pojo.TOrder;
 import com.zhx.pojo.TSeckillOrder;
 import com.zhx.pojo.TUser;
@@ -20,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SeckillController {
 
     @Autowired
-    private TGoodsService tGoodsService;
+    private TGoodsMapper tGoodsMapper;
 
     @Autowired
-    private TSeckillOrderService tSeckillOrderService;
+    private TSeckillOrderMapper tSeckillOrderMapper;
 
     @Autowired
     private TOrderService tOrderService;
@@ -35,7 +38,7 @@ public class SeckillController {
         }
         model.addAttribute("user",user);
 
-        GoodsVo goods = tGoodsService.findGoodsVoByGoodsId(goodsId);
+        GoodsVo goods = tGoodsMapper.findGoodsVoByGoodsId(goodsId);
         //判断库存
         if (goods.getStockCount() < 1) {
             model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
@@ -43,7 +46,7 @@ public class SeckillController {
         }
 
         //判断是否重复抢购
-        TSeckillOrder secKillOrder = tSeckillOrderService.getOne(new QueryWrapper<TSeckillOrder>()
+        TSeckillOrder secKillOrder = tSeckillOrderMapper.selectOne(new QueryWrapper<TSeckillOrder>()
                 .eq("user_id", user.getId())
                 .eq("goods_id", goodsId));
 

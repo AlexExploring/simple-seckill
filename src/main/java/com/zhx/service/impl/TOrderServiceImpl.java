@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhx.mapper.TOrderMapper;
+import com.zhx.mapper.TSeckillGoodsMapper;
+import com.zhx.mapper.TSeckillOrderMapper;
 import com.zhx.pojo.TOrder;
 import com.zhx.pojo.TSeckillGoods;
 import com.zhx.pojo.TSeckillOrder;
 import com.zhx.pojo.TUser;
 import com.zhx.service.TOrderService;
-import com.zhx.service.TSeckillGoodsService;
-import com.zhx.service.TSeckillOrderService;
 import com.zhx.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,26 +24,25 @@ import java.util.Date;
 public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> implements TOrderService {
 
     @Autowired
-    private TSeckillGoodsService tSeckillGoodsService;
+    private TSeckillGoodsMapper tSeckillGoodsMapper;
 
     @Autowired
-    private TSeckillOrderService tSeckillOrderService;
+    private TSeckillOrderMapper tSeckillOrderMapper;
 
     @Autowired
     private  TOrderMapper tOrderMapper;
 
     public TOrder secKill(TUser user, GoodsVo goodsVo) {
         //秒杀商品扣减库存
-        TSeckillGoods seckillGoods = tSeckillGoodsService.getOne(new QueryWrapper<TSeckillGoods>().eq("goods_id", goodsVo.getId()));
+        TSeckillGoods seckillGoods = tSeckillGoodsMapper.selectOne(new QueryWrapper<TSeckillGoods>().eq("goods_id", goodsVo.getId()));
         seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        boolean seckillGoodsResult = tSeckillGoodsService.update(new UpdateWrapper<TSeckillGoods>()
+        int seckillGoodsResult = tSeckillGoodsMapper.update(null,new UpdateWrapper<TSeckillGoods>()
                 .setSql("stock_count = " + "stock_count - 1")
                 .eq("goods_id", goodsVo.getId())
-                .gt("stock_count", 0)
-        );
+                .gt("stock_count", 0));
 
         //扣减库存失败
-        if (!seckillGoodsResult) {
+        if (seckillGoodsResult <= 0) {
             return null;
         }
 
@@ -65,7 +64,7 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         tSeckillOrder.setUserId(user.getId());
         tSeckillOrder.setOrderId(order.getId());
         tSeckillOrder.setGoodsId(goodsVo.getId());
-        tSeckillOrderService.save(tSeckillOrder);
+        tSeckillOrderMapper.insert(tSeckillOrder);
 
         return order;
     }

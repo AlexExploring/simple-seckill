@@ -4,7 +4,6 @@ import com.zhx.pojo.TUser;
 import com.zhx.service.TGoodsService;
 import com.zhx.service.TUserService;
 import com.zhx.vo.GoodsVo;
-import com.zhx.vo.RespBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
