@@ -13,6 +13,7 @@ import com.zhx.pojo.TUser;
 import com.zhx.service.TOrderService;
 import com.zhx.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -31,6 +32,46 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 
     @Autowired
     private  TOrderMapper tOrderMapper;
+
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
+    public TOrder secKill1(TUser user, GoodsVo goodsVo) {
+        //秒杀商品扣减库存
+        TSeckillGoods seckillGoods = tSeckillGoodsMapper.selectOne(new QueryWrapper<TSeckillGoods>().eq("goods_id", goodsVo.getId()));
+        seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
+        int seckillGoodsResult = tSeckillGoodsMapper.update(null,new UpdateWrapper<TSeckillGoods>()
+                .setSql("stock_count = " + "stock_count - 1")
+                .eq("goods_id", goodsVo.getId())
+                .gt("stock_count", 0));
+
+        //扣减库存失败
+        if (seckillGoodsResult <= 0) {
+            return null;
+        }
+
+        //生成订单
+        TOrder order = new TOrder();
+        order.setUserId(user.getId());
+        order.setGoodsId(goodsVo.getId());
+        order.setDeliveryAddrId(0L);
+        order.setGoodsName(goodsVo.getGoodsName());
+        order.setGoodsCount(1);
+        order.setGoodsPrice(seckillGoods.getSeckillPrice());
+        order.setOrderChannel(1);
+        order.setStatus(0);
+        order.setCreateDate(new Date());
+        tOrderMapper.insert(order);
+
+        //生成秒杀订单
+        TSeckillOrder tSeckillOrder = new TSeckillOrder();
+        tSeckillOrder.setUserId(user.getId());
+        tSeckillOrder.setOrderId(order.getId());
+        tSeckillOrder.setGoodsId(goodsVo.getId());
+        tSeckillOrderMapper.insert(tSeckillOrder);
+
+        return order;
+    }
 
     public TOrder secKill(TUser user, GoodsVo goodsVo) {
         //秒杀商品扣减库存
@@ -65,6 +106,8 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         tSeckillOrder.setOrderId(order.getId());
         tSeckillOrder.setGoodsId(goodsVo.getId());
         tSeckillOrderMapper.insert(tSeckillOrder);
+
+        redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goodsVo.getId(), tSeckillOrder);
 
         return order;
     }

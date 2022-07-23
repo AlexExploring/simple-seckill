@@ -1,5 +1,6 @@
 package com.zhx.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhx.exception.GlobalException;
 import com.zhx.mapper.TUserMapper;
 import com.zhx.pojo.TUser;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
-public class TUserServiceImpl implements TUserService {
+public class TUserServiceImpl extends ServiceImpl<TUserMapper,TUser> implements TUserService {
 
     @Autowired
     private TUserMapper tUserMapper;

@@ -24,6 +24,8 @@ public interface TOrderService extends IService<TOrder> {
      * @operation add
      * @date 1:44 下午 2022/3/4
      **/
+    TOrder secKill1(TUser user, GoodsVo goodsVo);
+
     TOrder secKill(TUser user, GoodsVo goodsVo);
 
 }

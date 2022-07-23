@@ -1,5 +1,6 @@
 package com.zhx.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.zhx.pojo.TUser;
 import com.zhx.vo.LoginVo;
 import com.zhx.vo.RespBean;
@@ -7,7 +8,7 @@ import com.zhx.vo.RespBean;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface TUserService {
+public interface TUserService extends IService<TUser> {
 
     /**
      * 登录方法
