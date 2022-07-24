@@ -24,7 +24,7 @@ public class JsonUtil {
      * @param obj
      * @return
      */
-    public static String object2JsonStr(Object obj) {
+    public static String objectToJsonStr(Object obj) {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
@@ -39,7 +39,7 @@ public class JsonUtil {
      *
      * @param <T> 泛型
      */
-    public static <T> T jsonStr2Object(String jsonStr, Class<T> clazz) {
+    public static <T> T jsonStrToObject(String jsonStr, Class<T> clazz) {
         try {
             return objectMapper.readValue(jsonStr.getBytes("UTF-8"), clazz);
         } catch (JsonParseException e) {
