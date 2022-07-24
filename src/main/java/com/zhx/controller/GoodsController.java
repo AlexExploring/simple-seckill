@@ -65,7 +65,7 @@ public class GoodsController {
     public String toDetail(Model model,TUser user, @PathVariable Long goodsId,
                            HttpServletRequest request,HttpServletResponse response) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        String html = (String) valueOperations.get("goodsDetails:"+goodsId);
+        String html = (String) valueOperations.get("goodsDetail:"+goodsId);
         if (!StringUtils.isEmpty(html)) {
             return html;
         }
@@ -92,20 +92,15 @@ public class GoodsController {
             seckillStatus = 1;
             remainSeconds = 0;
         }
-//        model.addAttribute("remainSeconds", remainSeconds);
-//        model.addAttribute("goods", goodsVo);
-//        model.addAttribute("seckillStatus", seckillStatus);
+        model.addAttribute("remainSeconds", remainSeconds);
+        model.addAttribute("goods", goodsVo);
+        model.addAttribute("seckillStatus", seckillStatus);
 
-//        WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
-//        html = thymeleafViewResolver.getTemplateEngine().process("goodsDetail", webContext);
-//        if (!StringUtils.isEmpty(html)) {
-//            valueOperations.set("goodsDetail:" + goodsId, html, 60, TimeUnit.SECONDS);
-//        }
-        DetailVo detailVo = new DetailVo();
-        detailVo.setTUser(user);
-        detailVo.setGoodsVo(goodsVo);
-        detailVo.setRemainSeconds(remainSeconds);
-        detailVo.setSecKillStatus(seckillStatus);
-        return RespBean.success(detailVo);
+        WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goodsDetail", webContext);
+        if (!StringUtils.isEmpty(html)) {
+            valueOperations.set("goodsDetail:" + goodsId, html, 60, TimeUnit.SECONDS);
+        }
+        return html;
     }
 }
