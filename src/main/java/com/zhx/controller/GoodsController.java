@@ -40,6 +40,9 @@ public class GoodsController {
     @Autowired
     private ThymeleafViewResolver thymeleafViewResolver;
 
+    /**
+     * 做了页面缓存
+     */
     @RequestMapping(value = "/toList", produces = "text/html;charset=utf-8")
     @ResponseBody
     public String toList(Model model, TUser user, HttpServletRequest request, HttpServletResponse response) {
@@ -60,9 +63,12 @@ public class GoodsController {
         return html;
     }
 
-    @RequestMapping(value = "/detail/{goodsId}", produces = "text/html;charset=utf-8")
+    /**
+     * 做了页面缓存
+     */
+    @RequestMapping(value = "/toDetail1{goodsId}", produces = "text/html;charset=utf-8")
     @ResponseBody
-    public String toDetail(Model model,TUser user, @PathVariable Long goodsId,
+    public String toDetail1(Model model,TUser user, @PathVariable Long goodsId,
                            HttpServletRequest request,HttpServletResponse response) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
         String html = (String) valueOperations.get("goodsDetail:"+goodsId);
