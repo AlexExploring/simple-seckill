@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DetailVo {
-
-
     private TUser tUser;
 
     private GoodsVo goodsVo;
@@ -25,6 +23,4 @@ public class DetailVo {
     private int secKillStatus;
 
     private int remainSeconds;
-
-
 }

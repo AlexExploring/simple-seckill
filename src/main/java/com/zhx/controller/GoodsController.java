@@ -64,19 +64,13 @@ public class GoodsController {
     }
 
     /**
-     * 做了页面缓存
+     * 商品详情页面静态化
      */
-    @RequestMapping(value = "/toDetail1{goodsId}", produces = "text/html;charset=utf-8")
+    @RequestMapping(value = "/toDetail1{goodsId}")
     @ResponseBody
-    public String toDetail1(Model model,TUser user, @PathVariable Long goodsId,
-                           HttpServletRequest request,HttpServletResponse response) {
-        ValueOperations valueOperations = redisTemplate.opsForValue();
-        String html = (String) valueOperations.get("goodsDetail:"+goodsId);
-        if (!StringUtils.isEmpty(html)) {
-            return html;
-        }
-        model.addAttribute("user",user);
+    public String toDetail1(Model model,TUser user, @PathVariable Long goodsId) {
 
+        model.addAttribute("user",user);
         GoodsVo goodsVo = tGoodsService.findGoodsVoByGoodsId(goodsId);
         Date startDate = goodsVo.getStartDate();
         Date endDate = goodsVo.getEndDate();
@@ -102,11 +96,6 @@ public class GoodsController {
         model.addAttribute("goods", goodsVo);
         model.addAttribute("seckillStatus", seckillStatus);
 
-        WebContext webContext = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
-        html = thymeleafViewResolver.getTemplateEngine().process("goodsDetail", webContext);
-        if (!StringUtils.isEmpty(html)) {
-            valueOperations.set("goodsDetail:" + goodsId, html, 60, TimeUnit.SECONDS);
-        }
-        return html;
+        return null;
     }
 }
