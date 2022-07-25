@@ -28,4 +28,6 @@ public interface TOrderService extends IService<TOrder> {
 
     TOrder secKill(TUser user, GoodsVo goodsVo);
 
+    OrderDetailVo detail(Long orderId);
+
 }

@@ -3,6 +3,7 @@ package com.zhx.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zhx.exception.GlobalException;
 import com.zhx.mapper.TOrderMapper;
 import com.zhx.mapper.TSeckillGoodsMapper;
 import com.zhx.mapper.TSeckillOrderMapper;
@@ -10,8 +11,11 @@ import com.zhx.pojo.TOrder;
 import com.zhx.pojo.TSeckillGoods;
 import com.zhx.pojo.TSeckillOrder;
 import com.zhx.pojo.TUser;
+import com.zhx.service.TGoodsService;
 import com.zhx.service.TOrderService;
 import com.zhx.vo.GoodsVo;
+import com.zhx.vo.OrderDetailVo;
+import com.zhx.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,9 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 
     @Autowired
     private  TOrderMapper tOrderMapper;
+
+    @Autowired
+    private TGoodsService tGoodsService;
 
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
@@ -110,5 +117,17 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goodsVo.getId(), tSeckillOrder);
 
         return order;
+    }
+
+    public OrderDetailVo detail(Long orderId) {
+        if (orderId == null) {
+            throw new GlobalException(RespBeanEnum.ORDER_NOT_EXIST);
+        }
+        TOrder tOrder = tOrderMapper.selectById(orderId);
+        GoodsVo goodsVoByGoodsId = tGoodsService.findGoodsVoByGoodsId(tOrder.getGoodsId());
+        OrderDetailVo orderDetailVo = new OrderDetailVo();
+        orderDetailVo.setTOrder(tOrder);
+        orderDetailVo.setGoodsVo(goodsVoByGoodsId);
+        return orderDetailVo;
     }
 }
