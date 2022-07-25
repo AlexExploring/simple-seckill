@@ -32,9 +32,6 @@ public class GoodsController {
     private TGoodsService tGoodsService;
 
     @Autowired
-    private TUserService tUserService;
-
-    @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
@@ -66,11 +63,10 @@ public class GoodsController {
     /**
      * 商品详情页面静态化
      */
-    @RequestMapping(value = "/toDetail1{goodsId}")
+    @RequestMapping(value = "/detail/{goodsId}")
     @ResponseBody
-    public String toDetail1(Model model,TUser user, @PathVariable Long goodsId) {
+    public RespBean detail(Model model,TUser user, @PathVariable Long goodsId) {
 
-        model.addAttribute("user",user);
         GoodsVo goodsVo = tGoodsService.findGoodsVoByGoodsId(goodsId);
         Date startDate = goodsVo.getStartDate();
         Date endDate = goodsVo.getEndDate();
@@ -92,10 +88,13 @@ public class GoodsController {
             seckillStatus = 1;
             remainSeconds = 0;
         }
-        model.addAttribute("remainSeconds", remainSeconds);
-        model.addAttribute("goods", goodsVo);
-        model.addAttribute("seckillStatus", seckillStatus);
 
-        return null;
+        DetailVo detailVo = new DetailVo();
+        detailVo.setTUser(user);
+        detailVo.setGoodsVo(goodsVo);
+        detailVo.setSecKillStatus(seckillStatus);
+        detailVo.setRemainSeconds(remainSeconds);
+
+        return RespBean.success(detailVo);
     }
 }
