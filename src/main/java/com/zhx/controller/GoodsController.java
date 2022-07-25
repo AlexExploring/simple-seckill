@@ -66,7 +66,7 @@ public class GoodsController {
     /**
      * 做了页面缓存
      */
-    @RequestMapping(value = "/toDetail1{goodsId}", produces = "text/html;charset=utf-8")
+    @RequestMapping(value = "/toDetail/{goodsId}", produces = "text/html;charset=utf-8")
     @ResponseBody
     public String toDetail1(Model model,TUser user, @PathVariable Long goodsId,
                            HttpServletRequest request,HttpServletResponse response) {
