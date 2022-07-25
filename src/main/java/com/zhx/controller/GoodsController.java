@@ -62,6 +62,9 @@ public class GoodsController {
     }
 
     /**
+     * fasdf
+     */
+    /**
      * 做了页面缓存
      */
     @RequestMapping(value = "/toDetail/{goodsId}", produces = "text/html;charset=utf-8")
