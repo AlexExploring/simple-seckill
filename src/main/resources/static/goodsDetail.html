@@ -37,9 +37,10 @@
                 <span id="seckillTip"></span>
             </td>
             <td>
-                <button class="btn btn-primary btn-block" type="submit" id="buyButton" onclick="doSecKill()">立即秒杀
+                <form id="secKillForm" method="post" action="/seckill/doSeckill">
                     <input type="hidden" name="goodsId" id="goodsId">
-                </button>
+                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>
+                </form>
             </td>
         </tr>
         <tr>
@@ -127,25 +128,5 @@
             $("#captcha").hide();
         }
     };
-
-    //秒杀方法
-    function doSecKill() {
-        $.ajax({
-            url: 'seckill/doSeckill',
-            type: "POST",
-            data: {
-                goodsId: $('#goodsId').val()
-            },
-            success: function (data) {
-                if (data.code == 200) {
-                    window.location.href="/orderDetail.html?orderId="+data.object.id;
-                } else {
-                    layer.msg(data.message);
-                }
-            }, error: function () {
-                layer.msg("客户端请求出错");
-            }
-        });
-    }
 </script>
 </html>
