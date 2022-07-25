@@ -38,14 +38,7 @@
         </tr>
         <tr>
             <td>订单状态</td>
-            <td id="status">
-                <!--                <span th:if="${order.status eq 0}">未支付</span>-->
-                <!--                <span th:if="${order.status eq 1}">待发货</span>-->
-                <!--                <span th:if="${order.status eq 2}">已发货</span>-->
-                <!--                <span th:if="${order.status eq 3}">已收货</span>-->
-                <!--                <span th:if="${order.status eq 4}">已退款</span>-->
-                <!--                <span th:if="${order.status eq 5}">已完成</span>-->
-            </td>
+            <td id="status"></td>
             <td>
                 <button class="btn btn-primary btn-block" type="submit" id="payButton">立即支付</button>
             </td>
@@ -61,62 +54,6 @@
     </table>
 </div>
 <script>
-    $(function () {
-        getOrderDetail();
-    });
-
-    function getOrderDetail() {
-        var orderId = g_getQueryString("orderId");
-        $.ajax({
-            url: "/order/detail",
-            type: "GET",
-            data: {
-                orderId: orderId
-            },
-            success: function (data) {
-                if (data.code == 200) {
-                    render(data.object);
-                } else {
-                    layer.msg(data.message);
-                }
-            },
-            error: function () {
-                layer.msg("客户端请求错误")
-            }
-        });
-    }
-
-        function render(detail) {
-            var goods = detail.goodsVo;
-            var order = detail.torder;
-            $("#goodsName").text(goods.goodsName);
-            $("#goodsImg").attr("src", goods.goodsImg);
-            $("#goodsPrice").text(order.goodsPrice);
-            $("#createDate").text(new Date(order.createDate).format("yyyy-MM-dd HH:mm:ss"));
-            var status = order.status;
-            var statusText = ""
-            switch (status) {
-                case 0:
-                    statusText = "未支付";
-                    break;
-                case 1:
-                    statusText = "待发货";
-                    break;
-                case 2:
-                    statusText = "已发货";
-                    break;
-                case 3:
-                    statusText = "已收货";
-                    break;
-                case 4:
-                    statusText = "已退款";
-                    break;
-                case 5:
-                    statusText = "已完成";
-                    break;
-            }
-            $("#status").text(statusText);
-        }
 </script>
 </body>
 </html>
