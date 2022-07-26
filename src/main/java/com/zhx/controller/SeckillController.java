@@ -40,7 +40,6 @@ public class SeckillController {
         if (user == null) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
-        model.addAttribute("user",user);
 
         GoodsVo goods = tGoodsMapper.findGoodsVoByGoodsId(goodsId);
         //判断库存
@@ -59,9 +58,6 @@ public class SeckillController {
 
         //执行秒杀操作
         TOrder order = tOrderService.secKill(user, goods);
-
-        model.addAttribute("order",order);
-        model.addAttribute("goods",goods);
 
         return RespBean.success(order);
     }
