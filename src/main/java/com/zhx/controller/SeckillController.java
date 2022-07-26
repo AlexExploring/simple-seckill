@@ -79,18 +79,20 @@ public class SeckillController implements InitializingBean {
     }
 
     /**
-     * 借助redis判断是否重复抢购
+     * 借助redis判断是否重复抢购， 课程提供的代码有bug，在高并发的情况下，可能有多条重复的消息
+     * 发送的消息队列中.直接使用redis预减库存(消息的条数会和库存数量相同)，由于有
+     * 重复的消息，所以实际上库存并没有被消耗完，只有redis中存储的库存被消耗完。
      */
-    @RequestMapping(value = "/doSeckill", method = RequestMethod.POST)
+    @RequestMapping(value = "/doSeckill2", method = RequestMethod.POST)
     @ResponseBody
-    public RespBean doSecKill(TUser user, Long goodsId) {
+    public RespBean doSecKill2(TUser user, Long goodsId) {
         if (user == null) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
 
         ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
 
-        //判断是否重复抢购
+        //判断是否重复抢购,在高并发的情况下，这里不能拦截所有重复的订单
         TSeckillOrder seckillOrder = (TSeckillOrder) valueOperations.get("order:" + user.getId() + ":" + goodsId);
         if (seckillOrder != null) {
             return RespBean.error(RespBeanEnum.REPEATE_ERROR);
@@ -107,6 +109,46 @@ public class SeckillController implements InitializingBean {
             EmptyStockMap.put(goodsId,true);
             valueOperations.increment("seckillGoods:" + goodsId);
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
+        }
+
+        SeckillMessage message = new SeckillMessage(user, goodsId);
+        redisTemplate.opsForSet().add("diffMessage",message);
+        redisTemplate.opsForList().leftPush("totalMessage",message);
+        mqSender.sendSeckillMessage(JsonUtil.objectToJsonStr(message));
+
+        return RespBean.success(0);
+    }
+
+    @RequestMapping(value = "/doSeckill", method = RequestMethod.POST)
+    @ResponseBody
+    public RespBean doSecKill(TUser user, Long goodsId) {
+        if (user == null) {
+            return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+
+        //判断是否重复抢购,在高并发的情况下，这里不能拦截所有重复的订单
+        TSeckillOrder seckillOrder = (TSeckillOrder) valueOperations.get("order:" + user.getId() + ":" + goodsId);
+        if (seckillOrder != null) {
+            return RespBean.error(RespBeanEnum.REPEATE_ERROR);
+        }
+
+        //内存标记减少redis访问次数
+        if (EmptyStockMap.get(goodsId)) {
+            return RespBean.error(RespBeanEnum.EMPTY_STOCK);
+        }
+
+        if (redisTemplate.opsForSet().add("preSet",user.getId()+":"+goodsId) > 0) {
+            //redis预减库存
+            Long stock = valueOperations.decrement("seckillGoods:" + goodsId);
+            if (stock < 0) {
+                EmptyStockMap.put(goodsId,true);
+                valueOperations.increment("seckillGoods:" + goodsId);
+                return RespBean.error(RespBeanEnum.EMPTY_STOCK);
+            }
+        }else {
+            return RespBean.error(RespBeanEnum.REPEATE_ERROR);
         }
 
         SeckillMessage message = new SeckillMessage(user, goodsId);

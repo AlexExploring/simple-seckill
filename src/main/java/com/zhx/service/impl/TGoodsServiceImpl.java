@@ -5,10 +5,12 @@ import com.zhx.service.TGoodsService;
 import com.zhx.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class TGoodsServiceImpl implements TGoodsService {
 
     @Autowired

@@ -3,6 +3,7 @@ package com.zhx.rabbitmq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,11 +16,14 @@ public class MQSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
     /**
      * 发送秒杀信息
      **/
     public void sendSeckillMessage(String message) {
-        log.info("发送消息" + message);
+        log.info("发送消息：" + message);
         rabbitTemplate.convertAndSend("seckillExchange", "seckill.message", message);
     }
 
