@@ -40,28 +40,21 @@ public class SeckillController {
         if (user == null) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
-        model.addAttribute("user",user);
 
         GoodsVo goods = tGoodsMapper.findGoodsVoByGoodsId(goodsId);
         //判断库存
         if (goods.getStockCount() < 1) {
-            model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
 
         //判断是否重复抢购
         TSeckillOrder seckillOrder = (TSeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goodsId);
-
         if (seckillOrder != null) {
-            model.addAttribute("errmsg",RespBeanEnum.REPEATE_ERROR.getMessage());
             return RespBean.error(RespBeanEnum.REPEATE_ERROR);
         }
 
         //执行秒杀操作
         TOrder order = tOrderService.secKill(user, goods);
-
-        model.addAttribute("order",order);
-        model.addAttribute("goods",goods);
 
         return RespBean.success(order);
     }
