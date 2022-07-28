@@ -30,4 +30,9 @@ public interface TOrderService extends IService<TOrder> {
 
     OrderDetailVo detail(Long orderId);
 
+    String createPath(TUser tuser, Long goodsId);
+
+    boolean checkCaptcha(TUser tuser, Long goodsId, String captcha);
+
+    boolean checkPath(TUser user, Long goodsId, String path);
 }
