@@ -17,6 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,9 @@ public class SeckillController implements InitializingBean {
     private MQSender mqSender;
 
     private Map<Long, Boolean> EmptyStockMap = new HashMap<>();
+
+    @Autowired
+    private RedisScript stockScript;
 
     /**
      * 借助redis判断是否重复抢购
@@ -109,7 +114,7 @@ public class SeckillController implements InitializingBean {
         }
 
         //redis预减库存
-        Long stock = valueOperations.decrement("seckillGoods:" + goodsId);
+        Long stock = (Long) redisTemplate.execute(stockScript, Collections.singletonList("seckillGoods:" + goodsId), Collections.EMPTY_LIST);
         if (stock < 0) {
             EmptyStockMap.put(goodsId,true);
             valueOperations.increment("seckillGoods:" + goodsId);
@@ -117,8 +122,9 @@ public class SeckillController implements InitializingBean {
         }
 
         SeckillMessage message = new SeckillMessage(user, goodsId);
-        redisTemplate.opsForSet().add("diffMessage",message);
-        redisTemplate.opsForList().leftPush("totalMessage",message);
+//        redisTemplate.opsForSet().add("diffMessage",message);
+//        redisTemplate.opsForList().leftPush("totalMessage",message);
+
         mqSender.sendSeckillMessage(JsonUtil.objectToJsonStr(message));
 
         return RespBean.success(0);
@@ -146,7 +152,7 @@ public class SeckillController implements InitializingBean {
 
         if (redisTemplate.opsForSet().add("preSet",user.getId()+":"+goodsId) > 0) {
             //redis预减库存
-            Long stock = valueOperations.decrement("seckillGoods:" + goodsId);
+            Long stock = (Long) redisTemplate.execute(stockScript, Collections.singletonList("seckillGoods:" + goodsId), Collections.EMPTY_LIST);
             if (stock < 0) {
                 EmptyStockMap.put(goodsId,true);
                 valueOperations.increment("seckillGoods:" + goodsId);

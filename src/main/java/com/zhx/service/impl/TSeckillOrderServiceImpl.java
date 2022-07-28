@@ -16,6 +16,7 @@ public class TSeckillOrderServiceImpl extends ServiceImpl<TSeckillOrderMapper, T
 
     @Autowired
     private TSeckillOrderMapper tSeckillOrderMapper;
+
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
 
