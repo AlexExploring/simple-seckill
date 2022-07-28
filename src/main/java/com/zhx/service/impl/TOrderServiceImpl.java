@@ -93,6 +93,7 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 
         //扣减库存失败
         if (seckillGoodsResult <= 0) {
+            redisTemplate.opsForValue().set("isStockEmpty:" + goodsVo.getId(), 0);
             return null;
         }
 
