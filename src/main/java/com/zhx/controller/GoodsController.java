@@ -2,7 +2,6 @@ package com.zhx.controller;
 
 import com.zhx.pojo.TUser;
 import com.zhx.service.TGoodsService;
-import com.zhx.service.TUserService;
 import com.zhx.vo.DetailVo;
 import com.zhx.vo.GoodsVo;
 import com.zhx.vo.RespBean;

@@ -18,7 +18,7 @@ class SimpleSeckillApplicationTests {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private RedisScript redisScript;
+    private RedisScript lockScript;
 
     @Test
     public void testLock01() {
@@ -63,7 +63,7 @@ class SimpleSeckillApplicationTests {
             System.out.println("name=" + name);
             //操作结束，删除锁
             System.out.println(valueOperations.get("k1"));
-            Boolean result = (Boolean) redisTemplate.execute(redisScript, Collections.singletonList("k1"), value);
+            Boolean result = (Boolean) redisTemplate.execute(lockScript, Collections.singletonList("k1"), value);
             System.out.println(result);
         } else {
             System.out.println("有线程在使用，请稍后再试");

@@ -191,7 +191,6 @@ public class SeckillController implements InitializingBean {
             Long stock = (Long) redisTemplate.execute(stockScript, Collections.singletonList("seckillGoods:" + goodsId), Collections.EMPTY_LIST);
             if (stock < 0) {
                 EmptyStockMap.put(goodsId,true);
-                valueOperations.increment("seckillGoods:" + goodsId);
                 return RespBean.error(RespBeanEnum.EMPTY_STOCK);
             }
         }else {
